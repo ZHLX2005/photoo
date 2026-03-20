@@ -32,6 +32,11 @@ jobs:
           cd android
           gradle wrapper --gradle-version=8.11.1
 
+      - name: List available assemble tasks
+        run: |
+          cd android
+          ./gradlew tasks --all 2>&1 | grep -i 'assemble.*arm\|arm64\|abisplit\|split' || true
+
       - name: Build ARM64 release APK
         run: |
           cd android
