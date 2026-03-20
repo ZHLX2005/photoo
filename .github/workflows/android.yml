@@ -2,8 +2,8 @@ name: Build ARM64 APK
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - '**'
 
 jobs:
   build:
@@ -30,31 +30,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Extract version info from tag
-        id: version
-        run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          echo "VERSION_NAME=${TAG#v}" >> $GITHUB_OUTPUT
-
       - name: Build ARM64 release APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleArm64Release \
             -PtargetArchs=arm64-v8a \
-            -PversionName="${{ steps.version.outputs.VERSION_NAME }}" \
             --no-daemon --stacktrace
 
       - name: Rename APK
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          SHA=${{ github.sha }}
+          SHORT_SHA=${SHA:0:7}
           cp android/app/build/outputs/apk/arm64/release/app-arm64-release.apk \
-             "photoo-${TAG#v}-arm64.apk"
+             "photoo-${SHORT_SHA}-arm64.apk"
 
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v2
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ github.ref }}
-          files: photoo-${{ steps.version.outputs.VERSION_NAME }}-arm64.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: photoo-arm64-apk
+          path: photoo-*-arm64.apk
