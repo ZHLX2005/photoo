@@ -21,7 +21,10 @@ android {
         abi {
             enable true
             reset()
-            include "armeabi-v7a", "arm64-v8a"
+            def targetArchs = project.hasProperty("targetArchs")
+                ? project.property("targetArchs").split(',').toList()
+                : ["armeabi-v7a", "arm64-v8a"]
+            include targetArchs
             universalApk false
         }
     }
