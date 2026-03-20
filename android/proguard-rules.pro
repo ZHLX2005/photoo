@@ -1,33 +1,47 @@
 # Gson
 -keepattributes Signature
 -keepattributes *Annotation*
--keep class com.voicelike.app.AppStats { *; }
--keep class com.voicelike.app.MediaItem { *; }
--keep class com.voicelike.app.LocalizedStrings { *; }
--keep class com.voicelike.app.AppLanguage { *; }
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
 
-# Gson & Reflection
+# App models - keep ALL model classes
+-keep class com.voicelike.app.** { *; }
+
+# Gson
 -keep class com.google.gson.** { *; }
--keep class com.google.gson.reflect.TypeToken { *; }
--keep class * extends com.google.gson.reflect.TypeToken
+-keep class * extends com.google.gson.TypeAdapter
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
 
 # Kotlin
 -keep class kotlin.Metadata { *; }
+-keepclassmembers class **$WhenMappings {
+    <fields>;
+}
 
 # Coroutines
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
 -keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
--keepclassmembers class kotlinx.coroutines.CoroutineExceptionHandler {
-    <init>(...);
+-keepclassmembers class kotlinx.coroutines.** {
+    volatile <fields>;
 }
 
-# Compose (Generally handled by R8, but good to be safe)
-# -keep class androidx.compose.** { *; }
+# Compose
+-keep class androidx.compose.** { *; }
+-keepclassmembers class androidx.compose.** { *; }
 
-# ExoPlayer (Reduce stripping of required components if issues arise, but start strict)
-# -keep class androidx.media3.** { *; }
+# Media3 / ExoPlayer
+-keep class androidx.media3.** { *; }
+-keepclassmembers class androidx.media3.** { *; }
 
-# Prevent R8 from stripping the generic type information from fields/methods
-# which Gson relies on for TypeToken
--keepattributes EnclosingMethod
--keepattributes InnerClasses
+# ML Kit (Bundled - no Play Services required)
+-keep class com.google.mlkit.** { *; }
+-keepclassmembers class com.google.mlkit.** { *; }
+
+# Coil
+-keep class coil.** { *; }
+-keepclassmembers class coil.** { *; }
+
+# Reflection / Dynamic (AndroidX Startup, etc.)
+-keep class androidx.startup.** { *; }
