@@ -35,7 +35,7 @@ jobs:
       - name: List available assemble tasks
         run: |
           cd android
-          ./gradlew tasks --all 2>&1 | grep -i 'assemble.*arm\|arm64\|abisplit\|split' || true
+          ./gradlew tasks --all 2>&1 | grep -i 'assemble' || true
 
       - name: Build ARM64 release APK
         run: |
